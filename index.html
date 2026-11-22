@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>As características das escolas predizem o desempenho no ENEM? — CMP263 · UFRGS</title>
+<!--
+  Apresentação CMP263 – Aprendizado de Máquina (UFRGS, 2026/2)
+  Arquivo único, sem rede: CSS/JS/ícones inline; imagens em assets/.
+  Teclas: ← / → / espaço = navegar · N = notas do apresentador · F = tela cheia · L = idioma PT/ES · Home/End
+  URL: index.html?notas  abre já com as notas; index.html#7 abre no slide 7;
+       ?lang=es / ?lang=pt escolhe o idioma (combina com ?notas: index.html?lang=es&notas). A escolha fica em localStorage.
+  Idiomas: o HTML está em PT; o dicionário ES (texto PT -> texto ES) está no script, e os textos são trocados em tempo de execução.
+  Personalização: cores em :root (--accent, --ink, --bg).
+  Palco fixo de 1280×720 escalado para a janela (16:9). Impressão = 1 slide por página.
+-->
+<style>
+:root{
+  --bg:#FBFAF6; --ink:#14213D; --muted:#4A5568; --line:#D9D6CC;
+  --accent:#C8102E;      /* vermelho UFRGS */
+  --blue:#1F4E79; --green:#1B7F4B; --card:#FFFFFF; --soft:#F0EEE6;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#222;font-family:var(--sans);color:var(--ink)}
+.ic{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-0.12em;flex:none}
+i[data-i]{display:inline-flex}
+
+/* ---------- palco 1280×720 ---------- */
+#stage{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:0 0;background:var(--bg);overflow:hidden}
+.slide{position:absolute;inset:0;padding:44px 64px 60px;display:flex;flex-direction:column;
+  opacity:0;visibility:hidden;transition:opacity .25s ease,visibility 0s .25s}
+.slide.active{opacity:1;visibility:visible;transition:opacity .25s ease}
+.slide::before{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:var(--accent)}
+.kicker{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.kicker .ic{font-size:26px}
+h2{font-family:var(--serif);font-weight:700;font-size:46px;line-height:1.1;margin:6px 0 18px}
+.body{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.foot{position:absolute;left:64px;right:64px;bottom:16px;display:flex;justify-content:space-between;font-size:18px;color:var(--muted)}
+.foot b{color:var(--ink)}
+p,li{font-size:26px;line-height:1.3}
+.row{display:flex;gap:24px;align-items:stretch}
+.col{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px 20px}
+.card h3{font-size:26px;display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.card h3 .ic{font-size:34px;color:var(--accent)}
+.card p{font-size:24px;color:var(--muted)}
+.card p.red{color:var(--accent)} .card p.green{color:var(--green)}
+.big{font-family:var(--serif);font-weight:700}
+.red{color:var(--accent)} .blue{color:var(--blue)} .green{color:var(--green)} .mut{color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:10px;background:var(--soft);border-radius:999px;padding:8px 18px;font-size:26px;font-weight:600}
+.chip .ic{color:var(--accent);font-size:30px}
+.arrow{display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:38px;flex:none}
+.box{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:12px 16px;font-size:24px;line-height:1.2;text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.box small{font-size:20px;color:var(--muted);font-weight:400}
+.box .ic{font-size:34px;color:var(--accent)}
+.box.hl{background:var(--ink);color:#fff;border-color:var(--ink)} .box.hl small{color:#cdd5e5} .box.hl .ic{color:#fff}
+figure{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+figure img{display:block;max-width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;object-fit:contain}
+figcaption{font-size:24px;font-weight:600;text-align:center;line-height:1.2}
+table{border-collapse:collapse;font-size:26px}
+th,td{padding:10px 18px;text-align:right;border-bottom:2px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{font-size:22px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+tr.best td{font-weight:700;color:var(--accent)}
+
+/* ---------- capa / final ---------- */
+.cover{justify-content:center;padding-left:84px}
+.cover .logos{display:flex;align-items:center;gap:36px;position:absolute;top:36px;left:84px;right:64px}
+.cover .logos img{display:block}
+.cover .tile{background:var(--ink);border-radius:12px;padding:10px 22px;display:inline-flex}
+.cover h1{font-family:var(--serif);font-size:42px;line-height:1.15;margin:96px 0 14px;max-width:1080px}
+.cover .sub{font-size:28px;color:var(--blue);max-width:1060px;line-height:1.3;border-left:5px solid var(--accent);padding-left:20px;margin-bottom:26px}
+.cover .auth{font-size:28px;font-weight:700;display:flex;gap:10px 30px;flex-wrap:wrap}
+.cover .auth span{display:inline-flex;align-items:center;gap:8px}
+.cover .auth .ic{color:var(--accent)}
+.cover .inst{margin-top:14px;font-size:24px;color:var(--muted)}
+
+/* ---------- notas do apresentador ---------- */
+#notes{display:none;position:fixed;left:0;right:0;bottom:0;height:34vh;background:#101828;color:#F2F4F8;padding:14px 28px;overflow:auto;border-top:4px solid var(--accent);font-family:var(--sans)}
+body.notas #notes{display:block}
+#notes .meta{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin-bottom:8px;font-size:18px}
+#notes .who{background:var(--accent);color:#fff;font-weight:700;padding:4px 14px;border-radius:999px}
+#notes .tag{color:#B8C2D6}
+#notes ul{padding-left:26px} #notes li{font-size:20px;line-height:1.4;margin:2px 0}
+.notes{display:none}
+
+/* ---------- seletor de idioma ---------- */
+#lang{position:fixed;top:8px;right:10px;z-index:10;display:flex;gap:2px;opacity:.3;transition:opacity .2s;font-family:var(--sans)}
+#lang:hover,#lang:focus-within{opacity:1}
+#lang button{font:600 12px var(--sans);color:#fff;background:rgba(20,33,61,.55);border:0;padding:3px 8px;border-radius:4px;cursor:pointer}
+#lang button.on{background:var(--accent)}
+body.fs #lang{display:none}
+
+/* ---------- impressão / PDF: 1 slide por página ---------- */
+@page{size:1280px 720px;margin:0}
+@media print{
+  html,body{height:auto;overflow:visible;background:#fff}
+  #stage{position:static;transform:none!important;width:1280px;height:auto;overflow:visible}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1;visibility:visible;transition:none;break-after:page;page-break-after:always;overflow:hidden}
+  #notes,#lang{display:none!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@media (prefers-reduced-motion:reduce){.slide,.slide.active{transition:none}}
+</style>
+</head>
+<body>
+
+<!-- Ícones de linha (inline, sem CDN). Uso: <i data-i="nome"></i> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-school" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></symbol>
+  <symbol id="i-coins" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 5.5V8M12 16v2.5"/></symbol>
+  <symbol id="i-blocks" viewBox="0 0 24 24"><rect x="3" y="13" width="7" height="7"/><rect x="14" y="13" width="7" height="7"/><rect x="8.5" y="4" width="7" height="7"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V11M10 20V4M16 20v-7M2 20h20"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l5-6 4 3 8-9"/><path d="M15 5h5v5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.6 0l3-3a4 4 0 0 0-5.6-5.6l-1 1"/><path d="M14 10a4 4 0 0 0-5.6 0l-3 3a4 4 0 0 0 5.6 5.6l1-1"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17v.5"/></symbol>
+  <symbol id="i-branch" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="8" r="2"/><path d="M6 7v10M18 10c0 4-6 3-12 7"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2z"/><path d="M4 20a2 2 0 0 0 2 2h13v-4M8 7h7"/></symbol>
+  <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r=".6"/><circle cx="15" cy="9" r=".6"/><circle cx="9" cy="15" r=".6"/><circle cx="15" cy="15" r=".6"/></symbol>
+  <symbol id="i-pkg" viewBox="0 0 24 24"><path d="M12 3l8 4v10l-8 4-8-4V7z"/><path d="M4 7l8 4 8-4M12 11v10"/></symbol>
+  <symbol id="i-hash" viewBox="0 0 24 24"><path d="M9 4L7 20M17 4l-2 16M4 9h16M3 15h16"/></symbol>
+  <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 4v4M9 13v.5M15 13v.5M9.5 16.5h5"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.5 0 4.5 1.8 4.5 5"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 21h8M10 18h4"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v16M6 14l6 6 6-6"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18M6 21h12M5 7h14"/><path d="M5 7l-3 7a3.5 3.5 0 0 0 6 0zM19 7l-3 7a3.5 3.5 0 0 0 6 0z"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></symbol>
+  <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h12l-2 4 2 4H5"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+</svg>
+
+<div id="stage">
+
+<!-- ======================= 1. CAPA ======================= -->
+<section class="slide cover" data-who="Emerson" data-bloco="Bloco 1 · Problema e dados (~3 min 15 s)">
+  <div class="logos">
+    <span class="tile"><img src="assets/logo-ufrgs.svg" alt="UFRGS" height="76"></span>
+    <img src="assets/logo-inf.jpg" alt="Instituto de Informática – UFRGS" height="76">
+  </div>
+  <h1>Do School Characteristics Predict ENEM Performance? A Grouped and Nested Evaluation of Regression Models on Brazilian High Schools</h1>
+  <div class="sub">As características das escolas predizem o desempenho no ENEM? Uma avaliação agrupada e aninhada de modelos de regressão em escolas de ensino médio brasileiras</div>
+  <div class="auth">
+    <span><i data-i="person"></i>Artur Mariano da Silva</span>
+    <span><i data-i="person"></i>Emerson Herrera</span>
+    <span><i data-i="person"></i>Yaser Husein</span>
+  </div>
+  <div class="inst"><i data-i="cap"></i> CMP263 – Aprendizado de Máquina · UFRGS · 2026/2</div>
+  <aside class="notes"><ul>
+    <li>(Abertura — rascunho, ajustar) "Bom dia. Somos Artur, Emerson e Yaser, e vamos apresentar o nosso trabalho de CMP263."</li>
+    <li>"Eu apresento o problema e os dados; depois o Artur e o Yaser explicam a metodologia e os resultados."</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 2. A PERGUNTA ======================= -->
+<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema e dados (~3 min 15 s)">
+  <div class="kicker"><i data-i="help"></i>A pergunta</div>
+  <h2>ENEM · escola · estrutura</h2>
+  <div class="body">
+    <div class="row" style="align-items:center">
+      <div class="card" style="flex:1;text-align:center"><h3 style="justify-content:center"><i data-i="coins"></i>Nível socioeconômico</h3><p>a escola não controla</p></div>
+      <div class="arrow" style="font-size:44px;color:var(--ink)">≠</div>
+      <div class="card" style="flex:1;text-align:center;border-color:var(--accent)"><h3 style="justify-content:center"><i data-i="blocks"></i>Estrutura</h3><p>infraestrutura, tamanho, professores</p></div>
+    </div>
+    <div class="card" style="background:var(--ink);color:#fff;border-color:var(--ink);padding:22px 28px">
+      <p style="color:#fff;font-size:30px;font-weight:700">A estrutura de uma escola prediz a nota média dos seus alunos no ENEM?</p>
+      <p style="color:#E6EAF2;font-size:26px;margin-top:8px">E quanto ela explica além da rede (pública ou privada)?</p>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>"O ENEM é a principal prova de acesso ao ensino superior no Brasil."</li>
+    <li>"Já se sabe que escolas privadas têm notas mais altas que as públicas."</li>
+    <li>"Grande parte dessa diferença vem do nível socioeconômico dos alunos."</li>
+    <li>"Mas a escola não controla a renda das famílias."</li>
+    <li>"O que a escola e o governo podem mudar é a estrutura: infraestrutura, tamanho, professores."</li>
+    <li>"Então a nossa pergunta é: as características estruturais de uma escola predizem a nota média dos seus alunos no ENEM?"</li>
+    <li>"E também: quanto a estrutura explica além da rede pública ou privada?"</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 3. OS DADOS ======================= -->
+<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema e dados (~3 min 15 s)">
+  <div class="kicker"><i data-i="db"></i>Os dados</div>
+  <h2>Dois conjuntos públicos do INEP</h2>
+  <div class="body">
+    <div class="row" style="align-items:center;gap:16px">
+      <div class="col" style="flex:1.1">
+        <div class="box" style="padding:16px"><i data-i="cap"></i><b>ENEM 2025</b><small>média das notas por escola</small></div>
+        <div class="box" style="padding:16px"><i data-i="school"></i><b>Censo Escolar 2024</b><small>45 atributos da escola</small></div>
+      </div>
+      <div class="arrow"><i data-i="right"></i></div>
+      <div class="box hl" style="flex:1;align-self:stretch;font-size:28px"><i data-i="link"></i>Junção por escola<small>≥ 10 candidatos</small></div>
+      <div class="arrow"><i data-i="right"></i></div>
+      <div class="box" style="flex:1.1;align-self:stretch;border-color:var(--accent);border-width:3px"><span class="big red" style="font-size:54px">23.374</span><b>escolas</b><small>45 atributos</small></div>
+    </div>
+    <div class="row" style="gap:14px;flex-wrap:wrap">
+      <span class="chip"><i data-i="check"></i>31 infraestrutura</span>
+      <span class="chip"><i data-i="chart"></i>9 contagens</span>
+      <span class="chip"><i data-i="map"></i>5 rede e localização</span>
+      <span class="chip"><i data-i="target"></i>Regressão: prever a nota média</span>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>"Usamos dois dados públicos do INEP: os microdados do ENEM 2025 e do Censo Escolar 2024."</li>
+    <li>"Para cada escola, calculamos a média das notas dos alunos presentes nas quatro provas. Essa é a variável alvo."</li>
+    <li>"Ficamos com escolas que têm pelo menos dez candidatos, para a média não depender de poucos alunos."</li>
+    <li>"No final temos 23.374 escolas e 45 atributos: 31 indicadores de infraestrutura, 9 contagens de tamanho e recursos, e 5 de rede e localização."</li>
+    <li>"É um problema de regressão: queremos prever um número, a nota média."</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 4. EDA ======================= -->
+<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema e dados (~3 min 15 s)">
+  <div class="kicker"><i data-i="chart"></i>Análise exploratória</div>
+  <h2>A rede separa as escolas</h2>
+  <div class="body" style="gap:14px">
+    <div class="row" style="gap:16px;align-items:flex-start">
+      <figure style="flex:1"><img src="assets/target_hist.png" alt="Histograma da nota média por escola" style="height:272px"><figcaption>média <span class="red">524,7</span> · desvio <span class="red">62,4</span></figcaption></figure>
+      <figure style="flex:1"><img src="assets/target_by_dependencia.png" alt="Nota média por rede administrativa" style="height:272px"><figcaption>estaduais <span class="red">492,9</span> · privadas <span class="red">599,4</span></figcaption></figure>
+      <figure style="flex:1"><img src="assets/target_by_regiao.png" alt="Nota média por região" style="height:272px"><figcaption>Norte <span class="red">488,2</span> · Sudeste <span class="red">539,9</span></figcaption></figure>
+    </div>
+    <div><span class="chip"><i data-i="alert"></i>Merenda escolar × nota: ρ = −0,67</span></div>
+  </div>
+  <aside class="notes"><ul>
+    <li>(apontando os gráficos) "Aqui está a distribuição da nota média das escolas."</li>
+    <li>"A média é 524,7 pontos e o desvio padrão é 62,4."</li>
+    <li>"A rede separa muito as escolas."</li>
+    <li>"As estaduais, que são cerca de 70% das escolas, têm média de 492,9."</li>
+    <li>"As privadas têm 599,4."</li>
+    <li>"Por região a diferença é menor, mas consistente: do Norte, com 488,2, ao Sudeste, com 539,9."</li>
+    <li>"O atributo mais associado à nota é a merenda escolar, com correlação de menos 0,67. Ela é quase um indicador de escola pública."</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 5. QUALIDADE ======================= -->
+<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema e dados (~3 min 15 s)">
+  <div class="kicker"><i data-i="shield"></i>Qualidade dos dados</div>
+  <h2>Problemas encontrados e tratados</h2>
+  <div class="body">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div class="card"><h3><i data-i="search"></i>Faltantes</h3><p>no máximo 1,95% por atributo</p></div>
+      <div class="card"><h3><i data-i="alert"></i>Código 88888</h3><p>15 escolas: vira faltante</p></div>
+      <div class="card"><h3><i data-i="trend"></i>Contagens assimétricas</h3><p>transformação log</p></div>
+      <div class="card"><h3><i data-i="copy"></i>Redundantes</h3><p>região e turmas: removidos</p></div>
+      <div class="card" style="grid-column:span 2"><h3><i data-i="link"></i>Inconsistências entre fontes</h3><p>escolas mantidas (mudança de oferta)</p></div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>"Os dados faltantes são poucos: no máximo 1,95% em um atributo."</li>
+    <li>"Encontramos um código especial do INEP, 88888. Ele não é uma quantidade real: significa 'valor extremo'. Aparece em 15 escolas, nos computadores por aluno. Nós o tratamos como dado faltante."</li>
+    <li>"As contagens são muito assimétricas, porque existem escolas muito grandes. Por isso usamos logaritmo."</li>
+    <li>"Todos esses problemas são tratados no pré-processamento, que o meu colega vai explicar."</li>
+    <li>Passagem: "Agora o [nome] vai explicar como avaliamos os modelos."</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 6. PROTOCOLO ======================= -->
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~4 min)">
+  <div class="kicker"><i data-i="layers"></i>Metodologia</div>
+  <h2>Protocolo completo de avaliação</h2>
+  <div class="body" style="gap:10px">
+    <div class="row" style="gap:8px;align-items:stretch">
+      <div class="box" style="flex:1"><i data-i="db"></i><b>Junção</b><small>23.374 escolas · 45 atributos</small></div>
+      <div class="arrow" style="font-size:30px"><i data-i="right"></i></div>
+      <div class="box" style="flex:1"><i data-i="filter"></i><b>Pipeline</b><small>ajustado só no treino</small></div>
+      <div class="arrow" style="font-size:30px"><i data-i="right"></i></div>
+      <div class="box" style="flex:1.2"><i data-i="grid"></i><b>CV externa</b><small>5 dobras por município × 3 = 15</small></div>
+      <div class="arrow" style="font-size:30px"><i data-i="right"></i></div>
+      <div class="box" style="flex:1.2"><i data-i="search"></i><b>CV interna</b><small>GroupKFold(3) + grid search</small></div>
+    </div>
+    <div class="arrow" style="justify-content:flex-end;padding-right:120px;height:34px"><i data-i="down"></i></div>
+    <div class="row" style="gap:8px;align-items:stretch">
+      <div class="box" style="flex:1.3"><i data-i="scale"></i><b>Comparação</b><small>6 algoritmos + baselines · Friedman + Nemenyi</small></div>
+      <div class="arrow" style="font-size:30px"><i data-i="right"></i></div>
+      <div class="box hl" style="flex:1"><i data-i="trophy"></i><b>Melhor modelo</b><small>Gradient Boosting ajustado</small></div>
+      <div class="arrow" style="font-size:30px"><i data-i="right"></i></div>
+      <div class="box" style="flex:1.3"><i data-i="search"></i><b>Interpretação</b><small>SHAP · variantes A/B/C · resíduos</small></div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>(rascunho — ajustar pelo apresentador)</li>
+    <li>Visão geral do procedimento: todos os algoritmos usam o mesmo pré-processamento e as mesmas partições.</li>
+    <li>Junção ENEM + Censo → pré-processamento dentro de um Pipeline → CV externa (5 dobras agrupadas por município × 3 repetições = 15 partições, compartilhadas por todos os algoritmos).</li>
+    <li>CV interna GroupKFold(3) para escolher hiperparâmetros (CV aninhada); comparação de 6 algoritmos + baselines com Friedman e Nemenyi.</li>
+    <li>Melhor modelo: Gradient Boosting ajustado; depois, interpretação com SHAP, variantes A/B/C e resíduos por rede × região.</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 7. SEM VAZAMENTO ======================= -->
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~4 min)">
+  <div class="kicker"><i data-i="shield"></i>Metodologia</div>
+  <h2>Pipeline sem vazamento de dados</h2>
+  <div class="body">
+    <div class="row" style="gap:28px">
+      <div class="card" style="flex:1;border-color:var(--accent);border-width:3px;display:flex;flex-direction:column;gap:8px">
+        <h3 class="red" style="font-size:30px"><i data-i="x"></i>ERRADO</h3>
+        <div class="box"><span>1. Pré-processar <b>todos</b> os dados</span></div>
+        <div class="arrow" style="font-size:26px;height:26px"><i data-i="down"></i></div>
+        <div class="box">2. Separar treino / teste</div>
+        <div class="arrow" style="font-size:26px;height:26px"><i data-i="down"></i></div>
+        <div class="box">3. Ajustar e avaliar</div>
+        <p class="red" style="font-size:24px;font-weight:700;text-align:center;margin-top:4px">O teste vaza para o pré-processamento</p>
+      </div>
+      <div class="card" style="flex:1;border-color:var(--green);border-width:3px;display:flex;flex-direction:column;gap:8px">
+        <h3 class="green" style="font-size:30px"><i data-i="check"></i>CERTO</h3>
+        <div class="box">1. Separar treino / teste</div>
+        <div class="arrow" style="font-size:26px;height:26px"><i data-i="down"></i></div>
+        <div class="box"><span>2. Pipeline aprende <b>só no treino</b></span></div>
+        <div class="arrow" style="font-size:26px;height:26px"><i data-i="down"></i></div>
+        <div class="box">3. Aplica ao teste e avalia</div>
+        <p class="green" style="font-size:24px;font-weight:700;text-align:center;margin-top:4px">Medianas, escalas e categorias só do treino</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>(rascunho — ajustar pelo apresentador)</li>
+    <li>Todo passo que aprende dos dados (medianas, modas, médias, escalas, categorias) faz parte de um Pipeline do scikit-learn junto com o modelo.</li>
+    <li>Assim ele é ajustado só nas escolas de treino de cada dobra: nenhuma informação das escolas de teste vaza.</li>
+    <li>Pré-processamento: remove região e nº de turmas (redundantes); 88888 vira faltante + indicador; contagens (8): mediana, log(1+x), padronização; binários (31 + 2): moda, sem escala; categóricos: moda + one-hot. Resultado: 79 colunas.</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 8. DOBRAS AGRUPADAS ======================= -->
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~4 min)">
+  <div class="kicker"><i data-i="grid"></i>Metodologia</div>
+  <h2>Dobras agrupadas por município</h2>
+  <div class="body" style="gap:10px">
+    <svg viewBox="0 0 1152 250" width="1152" height="250" role="img" aria-label="Cinco dobras; cada município fica inteiro em uma só dobra" font-family="-apple-system,Segoe UI,Arial,sans-serif">
+      <g id="folds"></g>
+    </svg>
+    <div class="row" style="gap:14px;flex-wrap:wrap">
+      <span class="chip"><i data-i="map"></i>Sorteia-se município, não escola</span>
+      <span class="chip"><i data-i="grid"></i>5 dobras × 3 repetições</span>
+      <span class="chip"><i data-i="link"></i>Mesmas partições para todos</span>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>(rascunho — ajustar pelo apresentador)</li>
+    <li>Escolas do mesmo município compartilham contexto socioeconômico e tendem a ter notas parecidas. Se fossem separadas entre treino e teste, o modelo preveria uma escola pelas vizinhas e o erro seria subestimado.</li>
+    <li>Por isso usamos GroupKFold: são os 5.201 municípios, e não as escolas, que são atribuídos às dobras.</li>
+    <li>5 dobras repetidas 3 vezes, cada repetição com outro embaralhamento (semente 42 + r) = 15 medições por algoritmo. As dobras são calculadas uma vez e compartilhadas: comparações pareadas.</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 9. SPOT-CHECKING ======================= -->
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~4 min)">
+  <div class="kicker"><i data-i="scale"></i>Spot-checking · Friedman + Nemenyi</div>
+  <h2>Seis algoritmos, hiperparâmetros padrão</h2>
+  <div class="body" style="gap:8px">
+    <div class="row" style="gap:24px;align-items:center">
+      <figure style="flex:none"><img src="assets/spot_checking_rmse.png" alt="RMSE de cada algoritmo nas 15 partições" style="height:262px"></figure>
+      <div class="col" style="gap:10px">
+        <span class="chip"><i data-i="chart"></i>Friedman: p = 2,3 × 10<sup style="font-size:.6em">−14</sup></span>
+        <span class="chip"><i data-i="target"></i>Nemenyi: CD = 1,95</span>
+        <span class="chip"><i data-i="trophy"></i>SVR, RF e GB empatados</span>
+      </div>
+    </div>
+    <svg viewBox="0 0 1152 200" width="1152" height="200" role="img" aria-label="Diagrama de diferença crítica" font-family="-apple-system,Segoe UI,Arial,sans-serif" font-size="22" fill="#14213D">
+      <g id="cd"></g>
+    </svg>
+  </div>
+  <aside class="notes"><ul>
+    <li>(rascunho — ajustar pelo apresentador)</li>
+    <li>Seis algoritmos com vieses diferentes e hiperparâmetros padrão: regressão linear, kNN, árvore, SVR (RBF), random forest e gradient boosting. No SVR o alvo é padronizado durante o treino.</li>
+    <li>Todos melhoram sobre a baseline da média. RMSE: SVR 30,77; RF 30,99; GB 31,65; kNN 33,91; linear 34,24; árvore 43,51 (sem poda, sobreajusta).</li>
+    <li>Friedman rejeita a equivalência (χ² = 73,10; p = 2,3 × 10⁻¹⁴). Postos médios: SVR 1,07; RF 1,93; GB 3,00; kNN 4,20; linear 4,80; árvore 6,00. Diferença crítica de Nemenyi = 1,95.</li>
+    <li>SVR e RF são melhores que kNN, linear e árvore; GB é melhor que a árvore; os três líderes não se distinguem. Levamos os três (e a árvore) para o ajuste.</li>
+    <li>Cuidado: os p-valores são otimistas, pois as medições não são independentes.</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 10. CV ANINHADA ======================= -->
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~4 min)">
+  <div class="kicker"><i data-i="layers"></i>Validação cruzada aninhada</div>
+  <h2>Otimização sem otimismo</h2>
+  <div class="body">
+    <div class="row" style="gap:36px;align-items:center">
+      <div style="flex:1.05;border:3px solid var(--ink);border-radius:16px;padding:22px 22px;background:#fff">
+        <div style="font-size:28px;font-weight:700"><i data-i="grid" style="color:var(--accent)"></i> CV externa <span class="mut" style="font-weight:400">· mede o erro</span></div>
+        <div style="font-size:24px;color:var(--muted);margin:2px 0 16px">5 dobras agrupadas × 3 repetições</div>
+        <div style="border:3px solid var(--accent);border-radius:12px;padding:18px 18px;background:#FFF5F6">
+          <div style="font-size:28px;font-weight:700"><i data-i="search" style="color:var(--accent)"></i> CV interna <span class="mut" style="font-weight:400">· escolhe</span></div>
+          <div style="font-size:24px;color:var(--muted)">GroupKFold(3) + GridSearchCV</div>
+        </div>
+      </div>
+      <table style="flex:1">
+        <tr><th>RMSE</th><th>padrão</th><th>ajustado</th></tr>
+        <tr class="best"><td>Grad. Boosting</td><td>31,65</td><td>30,63</td></tr>
+        <tr><td>SVR</td><td>30,77</td><td>30,68</td></tr>
+        <tr><td>Random Forest</td><td>30,99</td><td>30,91</td></tr>
+        <tr><td>Árvore</td><td>43,51</td><td>33,31</td></tr>
+      </table>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>(rascunho — ajustar pelo apresentador)</li>
+    <li>Escolher hiperparâmetros nos mesmos dados que estimam o desempenho dá estimativa otimista; a CV aninhada evita isso.</li>
+    <li>Laço externo: o mesmo protocolo 3 × 5 agrupado, que mede o erro. Dentro de cada treino externo: GridSearchCV com 3 dobras também agrupadas por município, escolhendo por RMSE; o modelo escolhido é reajustado e avaliado uma vez no teste externo.</li>
+    <li>Agrupar as dobras internas importa: senão a busca favoreceria modelos que exploram escolas vizinhas (ex.: kNN com k pequeno). Grades pequenas (cada combinação treina 45 vezes).</li>
+    <li>Resultados (RMSE ajustado): GB 30,63; SVR 30,68; RF 30,91; árvore 43,51 → 33,31 (max_depth = 10 nas 15 buscas). Hiperparâmetros estáveis; alguns na borda da grade. Toda a CV aninhada levou ~17 min.</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 11. MELHOR MODELO ======================= -->
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 3 · Resultados e interpretação (~4 min)">
+  <div class="kicker"><i data-i="trophy"></i>Resultados</div>
+  <h2>Melhor modelo: Gradient Boosting ajustado</h2>
+  <div class="body" style="gap:16px">
+    <div class="row" style="gap:36px;align-items:center">
+      <div class="col" style="flex:1;gap:10px" id="bars"></div>
+      <div class="card" style="text-align:center;min-width:230px;border-color:var(--accent);border-width:3px">
+        <div class="big red" style="font-size:64px;line-height:1">0,76</div>
+        <div style="font-size:26px;font-weight:700">R²</div>
+        <div style="font-size:24px;color:var(--muted)">RMSE 30,6 pontos</div>
+      </div>
+    </div>
+    <div class="mut" style="font-size:22px">RMSE em pontos do ENEM; menor é melhor. GB e SVR: empate estatístico.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>(rascunho — ajustar pelo apresentador)</li>
+    <li>Gradient Boosting ajustado: RMSE 30,63 (R² = 0,757). Prever só a média dá 62,4 (o desvio padrão do alvo); conhecer só a rede já dá 39,7 (R² 0,59); a regressão linear com todos os atributos dá 34,3 (R² 0,70).</li>
+    <li>Hiperparâmetros escolhidos nas 15 dobras: learning_rate = 0,05 e max_depth = 5.</li>
+    <li>Friedman de novo rejeita (p = 3,4 × 10⁻⁸); postos: GB 1,40; SVR 1,73; RF 2,87; árvore 4,00; CD = 1,21. GB e SVR não se separam; os três melhores ficam a 0,3 ponto de RMSE entre si.</li>
+    <li>Escolhemos GB para interpretar: menor erro, melhor posto médio e SHAP exato e rápido para ensembles de árvores.</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 12. SHAP ======================= -->
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 3 · Resultados e interpretação (~4 min)">
+  <div class="kicker"><i data-i="search"></i>Interpretação · SHAP</div>
+  <h2>A rede domina as previsões</h2>
+  <div class="body">
+    <div class="row" style="gap:28px;align-items:center">
+      <figure style="flex:none"><img src="assets/shap_beeswarm.png" alt="SHAP beeswarm do Gradient Boosting" style="height:458px"></figure>
+      <div class="col" style="gap:14px">
+        <div class="card"><h3><i data-i="school"></i>Rede estadual</h3><p>37,7 pts · 7× o 2º atributo</p></div>
+        <div class="card"><h3><i data-i="users"></i>Professores do EM</h3><p>5,2 pts</p></div>
+        <div class="card"><h3><i data-i="map"></i>Estado e esgoto</h3><p>MG, SP, RS · rede de esgoto</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>(rascunho — ajustar pelo apresentador)</li>
+    <li>SHAP dos 15 atributos mais importantes. O indicador de escola estadual (TP_DEPENDENCIA_2) tem |SHAP| médio de 37,7 pontos, sete vezes o do segundo atributo. Ser estadual reduz a previsão em cerca de 30 pontos; não ser eleva em 50 a 85.</li>
+    <li>Entre os atributos estruturais, o mais importante é o nº de professores do EM (QT_DOC_MED, 5,2 pontos): poucas escolas com poucos professores perdem até ~40 pontos.</li>
+    <li>O estado também pesa: estar em MG, SP ou RS eleva a previsão. Esgoto, salas climatizadas, laboratório de ciências, computadores e tempo integral elevam; merenda reduz (proxy da rede pública).</li>
+    <li>SHAP explica o modelo, não as causas do desempenho.</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 13. QUANTO A REDE EXPLICA ======================= -->
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 3 · Resultados e interpretação (~4 min)">
+  <div class="kicker"><i data-i="scale"></i>Interpretação</div>
+  <h2>Quanto a rede explica?</h2>
+  <div class="body" style="gap:14px">
+    <div class="row" style="gap:28px;align-items:center">
+      <div class="col" style="flex:1;gap:8px">
+        <table>
+          <tr><th>R²</th><th>GB</th><th>Linear</th></tr>
+          <tr><td>A · todos</td><td class="red"><b>0,76</b></td><td>0,70</td></tr>
+          <tr><td>B · sem rede</td><td class="red"><b>0,73</b></td><td>0,64</td></tr>
+          <tr><td>C · sem rede e merenda</td><td class="red"><b>0,64</b></td><td>0,50</td></tr>
+        </table>
+      </div>
+      <figure style="flex:none"><img src="assets/interpretacao_residuos.png" alt="Resíduos por rede administrativa" style="height:300px"></figure>
+    </div>
+    <div class="row" style="gap:14px;flex-wrap:wrap">
+      <span class="chip"><i data-i="school"></i>Federais: +13,1 no Sudeste · −12,7 no Norte</span>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>(rascunho — ajustar pelo apresentador)</li>
+    <li>Variantes: A (todos os atributos), B (sem a rede administrativa), C (sem rede e sem merenda). R² do GB: 0,76 / 0,73 / 0,64; linear: 0,70 / 0,64 / 0,50.</li>
+    <li>Sem a rede, o GB perde metade do que perde o linear (0,76 → 0,73 contra 0,70 → 0,64): combinando os outros atributos ele reconstrói em parte se a escola é pública ou privada. Sem rede nem merenda, o GB ainda explica R² 0,64 (RMSE 37,4) contra 0,50 do linear.</li>
+    <li>Resíduos (observado − previsto, primeira partição, RMSE 30,7): estaduais e privadas têm resíduo médio perto de zero em todas as regiões. Privadas são mais dispersas (desvio 34–40 contra ~27 das estaduais): perfil socioeconômico não medido.</li>
+    <li>Federais mudam de sinal por região: +13,1 no Sudeste, +6,5 no Sul, −12,7 no Norte, −13,4 no Centro-Oeste. Com ~600 federais, o modelo aprende um efeito médio que não vale em toda parte.</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 14. CONCLUSOES ======================= -->
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 3 · Resultados e interpretação (~4 min)">
+  <div class="kicker"><i data-i="flag"></i>Conclusões</div>
+  <h2>Conclusões e limitações</h2>
+  <div class="body">
+    <div class="row" style="gap:24px">
+      <div class="card" style="flex:1;border-color:var(--green);border-width:3px">
+        <h3 class="green" style="font-size:30px"><i data-i="check" style="color:var(--green)"></i>Conclusões</h3>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:8px">
+          <li>A estrutura prediz muito: R² 0,76</li>
+          <li>Boa parte vem da rede pública/privada</li>
+          <li>Sem a rede: ainda R² 0,73</li>
+        </ul>
+      </div>
+      <div class="card" style="flex:1;border-color:var(--accent);border-width:3px">
+        <h3 class="red" style="font-size:30px"><i data-i="alert"></i>Limitações</h3>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:8px">
+          <li><b>Associação ≠ causa</b></li>
+          <li>Nível da escola, um só ano do ENEM</li>
+          <li>Censo 2024; sem indicador socioeconômico</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>(rascunho — ajustar pelo apresentador)</li>
+    <li>Em 23.374 escolas, com protocolo contra estimativas infladas (CV agrupada por município, partições idênticas, ajuste aninhado), a estrutura prediz grande parte da nota: RMSE 30,6 (R² 0,76) contra 62,4 da média e 39,7 só com a rede. GB, SVR e RF ficam a 0,3 ponto: o protocolo e os atributos importam mais que o algoritmo.</li>
+    <li>A maior parte do poder preditivo está ligada à rede pública/privada; a merenda é um segundo proxy. Sem a rede, o GB perde pouco (R² 0,73).</li>
+    <li>Limitações: resultados são associações, não causas; análise no nível da escola (não descreve alunos), só escolas com ≥ 10 candidatos; um só ano de ENEM e Censo 2024 (253 escolas sem matrícula no EM, 276 com mais candidatos que matrículas); alguns hiperparâmetros na borda da grade; p-valores otimistas.</li>
+    <li>Trabalhos futuros: indicador socioeconômico; várias edições do ENEM com validação temporal; escolas que vão muito acima do previsto pela estrutura.</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 15. REPRODUTIBILIDADE ======================= -->
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 3 · Resultados e interpretação (~4 min)">
+  <div class="kicker"><i data-i="branch"></i>Reprodutibilidade</div>
+  <h2>Reprodutibilidade e uso de IA</h2>
+  <div class="body">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div class="card"><h3><i data-i="branch"></i>Repo público</h3><p>código, dados e resultados no GitHub</p></div>
+      <div class="card"><h3><i data-i="book"></i>Notebooks</h3><p>com saídas; local ou Colab</p></div>
+      <div class="card"><h3><i data-i="dice"></i>Sementes</h3><p>fixas: 42 e 42 + r</p></div>
+      <div class="card"><h3><i data-i="pkg"></i>Versões</h3><p>Python 3.12, scikit-learn 1.9.1</p></div>
+      <div class="card"><h3><i data-i="hash"></i>Hashes</h3><p>SHA-256 dos dados do INEP</p></div>
+      <div class="card" style="border-color:var(--accent)"><h3><i data-i="bot"></i>IA declarada</h3><p>Claude como apoio, com revisão humana</p></div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>(rascunho — ajustar pelo apresentador)</li>
+    <li>Repositório público: github.com/emersonheto/enem-school-performance. Um script baixa os arquivos do INEP, registra URL e hash SHA-256 e constrói a tabela; os notebooks conferem os hashes antes de rodar.</li>
+    <li>Pré-processamento, dobras e avaliação implementados uma vez em src/enem_school/ e usados por todos os notebooks; testes unitários (pytest). Quatro notebooks, com saídas, rodam localmente ou no Google Colab.</li>
+    <li>Versões fixadas (Python 3.12, scikit-learn 1.9.1, SHAP 0.54.1); sementes fixas (42, e 42 + r na repetição r). As métricas se reproduzem exatamente na mesma plataforma.</li>
+    <li>Uso de IA: o Claude foi apoio para gerar/refatorar código e melhorar a redação; todas as decisões foram dos autores e tudo passou por revisão humana.</li>
+  </ul></aside>
+</section>
+
+<!-- ======================= 16. OBRIGADO ======================= -->
+<section class="slide cover" data-who="Artur ou Yaser" data-bloco="Bloco 3 · Resultados e interpretação (~4 min)">
+  <div class="logos">
+    <span class="tile"><img src="assets/logo-ufrgs.svg" alt="UFRGS" height="76"></span>
+    <img src="assets/logo-inf.jpg" alt="Instituto de Informática – UFRGS" height="76">
+  </div>
+  <div style="margin-top:70px">
+    <h1 style="margin:0 0 20px;font-size:76px">Obrigado!</h1>
+    <div class="sub" style="font-size:44px;font-family:var(--serif)">Perguntas?</div>
+    <div class="chip" style="font-size:28px"><i data-i="branch"></i>github.com/emersonheto/enem-school-performance</div>
+    <div class="inst" style="margin-top:22px">Artur Mariano da Silva · Emerson Herrera · Yaser Husein</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>(rascunho — ajustar pelo apresentador) "Obrigado. Todo o código e os resultados estão no repositório público. Ficamos à disposição para perguntas."</li>
+    <li>Se não entender a pergunta: "Desculpe, pode repetir, por favor?" · "Pode falar um pouco mais devagar?"</li>
+  </ul></aside>
+</section>
+
+</div><!-- /stage -->
+
+<!-- Painel de notas do apresentador (tecla N ou ?notas) -->
+<div id="notes" aria-live="polite"></div>
+<div id="lang" role="group" aria-label="Idioma"><button type="button" data-l="pt">PT</button><button type="button" data-l="es">ES</button></div>
+
+<script>
+(function(){
+  /* ---- ícones: <i data-i="x"> -> <svg><use href="#i-x"/></svg> ---- */
+  document.querySelectorAll('i[data-i]').forEach(function(el){
+    el.innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-'+el.dataset.i+'"/></svg>';
+  });
+  var NS='http://www.w3.org/2000/svg';
+  function s(tag,attrs,parent,text){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;parent.appendChild(e);return e;}
+
+  /* ---- slide 8: dobras agrupadas por município ---- */
+  (function(){
+    var g=document.getElementById('folds'),cols=['#1F4E79','#C8102E','#1B7F4B','#B7791F','#6B46C1','#0F766E','#9C4221','#2B6CB0','#B83280','#4A5568'];
+    var names='ABCDEFGHIJ';
+    for(var f=0;f<5;f++){
+      var x=f*232, test=(f===4);
+      s('rect',{x:x,y:0,width:208,height:236,rx:14,fill:test?'#FFF5F6':'#fff',stroke:test?'#C8102E':'#14213D','stroke-width':test?4:2.5,'stroke-dasharray':test?'10 6':'0'},g);
+      var tl=s('text',{x:x+104,y:34,'text-anchor':'middle','font-size':26,'font-weight':700,fill:test?'#C8102E':'#14213D'},g,'Dobra '+(f+1)+(test?' · teste':''));
+      if(test)tl.id='fold-test';
+      for(var m=0;m<2;m++){
+        var c=cols[f*2+m], y=52+m*92;
+        s('rect',{x:x+14,y:y,width:180,height:82,rx:10,fill:c,'fill-opacity':.12,stroke:c,'stroke-width':2.5},g);
+        s('text',{x:x+104,y:y+30,'text-anchor':'middle','font-size':24,'font-weight':700,fill:c},g,'Município '+names[f*2+m]);
+        for(var d=0;d<6;d++) s('circle',{cx:x+38+d*26,cy:y+58,r:8,fill:c},g);
+      }
+    }
+  })();
+
+  /* ---- slide 9: diagrama de diferença crítica (postos médios) ---- */
+  (function(){
+    var g=document.getElementById('cd'),x0=300,u=116,ay=64;
+    function X(o){return x0+o*u;}
+    s('line',{x1:X(0),y1:ay,x2:X(5),y2:ay,stroke:'#14213D','stroke-width':2},g);
+    for(var i=0;i<6;i++){s('line',{x1:X(i),y1:ay,x2:X(i),y2:ay-8,stroke:'#14213D','stroke-width':2},g);s('text',{x:X(i),y:ay-14,'text-anchor':'middle','font-weight':700},g,String(i+1));}
+    s('line',{x1:X(0),y1:16,x2:X(1.947),y2:16,stroke:'#C8102E','stroke-width':4},g);
+    s('line',{x1:X(0),y1:8,x2:X(0),y2:24,stroke:'#C8102E','stroke-width':4},g);
+    s('line',{x1:X(1.947),y1:8,x2:X(1.947),y2:24,stroke:'#C8102E','stroke-width':4},g);
+    s('text',{x:X(1.947)+14,y:23,fill:'#C8102E','font-weight':700},g,'CD = 1,95');
+    var L=[['SVR (1,07)',0.067,122,'l'],['Random Forest (1,93)',0.933,152,'l'],['Gradient Boosting (3,00)',2.0,182,'l'],
+           ['kNN (4,20)',3.2,182,'r'],['Linear (4,80)',3.8,152,'r'],['Árvore (6,00)',5.0,122,'r']];
+    L.forEach(function(e){
+      var x=X(e[1]),y=e[2],end=e[3]==='l'?x0-26:X(5)+26;
+      s('polyline',{points:x+','+ay+' '+x+','+y+' '+end+','+y,fill:'none',stroke:'#14213D','stroke-width':1.8},g);
+      s('text',{x:e[3]==='l'?end-8:end+8,y:y+7,'text-anchor':e[3]==='l'?'end':'start'},g,e[0]);
+    });
+    [[0.03,2.04,84],[1.96,3.84,94],[3.16,5.04,104]].forEach(function(b){
+      s('line',{x1:X(b[0]),y1:b[2],x2:X(b[1]),y2:b[2],stroke:'#1F4E79','stroke-width':7,'stroke-linecap':'round'},g);
+    });
+  })();
+
+  /* ---- slide 11: barras de RMSE ---- */
+  (function(){
+    var el=document.getElementById('bars');
+    [['Prever a média',62.4,'#8A94A6'],['Só a rede',39.7,'#5B7FA6'],['Regressão linear (A)',34.3,'#1F4E79'],['Gradient Boosting ajustado',30.6,'#C8102E']].forEach(function(r){
+      var d=document.createElement('div');
+      d.style.cssText='display:flex;align-items:center;gap:14px';
+      var best=r[0].indexOf('Gradient')===0;
+      d.innerHTML='<div style="width:270px;font-size:24px;'+(best?'font-weight:700;':'')+'">'+r[0]+'</div>'+
+        '<div style="flex:1;background:var(--soft);border-radius:8px;height:44px"><div style="width:'+(r[1]/62.4*100)+'%;height:100%;background:'+r[2]+';border-radius:8px"></div></div>'+
+        '<div style="width:70px;font-size:28px;font-weight:700;text-align:right">'+String(r[1]).replace('.',',')+'</div>';
+      el.appendChild(d);
+    });
+  })();
+
+  /* ---- controlador ---- */
+  var slides=[].slice.call(document.querySelectorAll('.slide')),N=slides.length,cur=0;
+  var stage=document.getElementById('stage'),panel=document.getElementById('notes');
+  /* ---- idiomas: PT (padrão) e ES. Chave = texto PT (sem espaços nas pontas) ---- */
+  var ES={
+  "As características das escolas predizem o desempenho no ENEM? — CMP263 · UFRGS":"¿Las características de las escuelas predicen el desempeño en el ENEM? — CMP263 · UFRGS",
+  "Instituto de Informática – UFRGS":"Instituto de Informática – UFRGS",
+  "As características das escolas predizem o desempenho no ENEM? Uma avaliação agrupada e aninhada de modelos de regressão em escolas de ensino médio brasileiras":"¿Las características de las escuelas predicen el desempeño en el ENEM? Una evaluación agrupada y anidada de modelos de regresión en escuelas de educación media brasileñas",
+  "CMP263 – Aprendizado de Máquina · UFRGS · 2026/2":"CMP263 – Aprendizaje Automático · UFRGS · 2026/2",
+  "Apresenta":"Presenta","Slide":"Diapositiva",
+  "Artur ou Yaser":"Artur o Yaser",
+  "Bloco 1 · Problema e dados (~3 min 15 s)":"Bloque 1 · Problema y datos (~3 min 15 s)",
+  "Bloco 2 · Metodologia (~4 min)":"Bloque 2 · Metodología (~4 min)",
+  "Bloco 3 · Resultados e interpretação (~4 min)":"Bloque 3 · Resultados e interpretación (~4 min)",
+  "(Abertura — rascunho, ajustar) \"Bom dia. Somos Artur, Emerson e Yaser, e vamos apresentar o nosso trabalho de CMP263.\"":"(Apertura — borrador, ajustar) \"Buenos días. Somos Artur, Emerson y Yaser, y vamos a presentar nuestro trabajo de CMP263.\"",
+  "\"Eu apresento o problema e os dados; depois o Artur e o Yaser explicam a metodologia e os resultados.\"":"\"Yo presento el problema y los datos; después Artur y Yaser explican la metodología y los resultados.\"",
+  /* 2 */
+  "A pergunta":"La pregunta","ENEM · escola · estrutura":"ENEM · escuela · estructura",
+  "Nível socioeconômico":"Nivel socioeconómico","a escola não controla":"la escuela no lo controla",
+  "Estrutura":"Estructura","infraestrutura, tamanho, professores":"infraestructura, tamaño, docentes",
+  "A estrutura de uma escola prediz a nota média dos seus alunos no ENEM?":"¿La estructura de una escuela predice la nota promedio de sus alumnos en el ENEM?",
+  "E quanto ela explica além da rede (pública ou privada)?":"¿Y cuánto explica más allá de la red (pública o privada)?",
+  "\"O ENEM é a principal prova de acesso ao ensino superior no Brasil.\"":"\"El ENEM es la principal prueba de acceso a la educación superior en Brasil.\"",
+  "\"Já se sabe que escolas privadas têm notas mais altas que as públicas.\"":"\"Ya se sabe que las escuelas privadas tienen notas más altas que las públicas.\"",
+  "\"Grande parte dessa diferença vem do nível socioeconômico dos alunos.\"":"\"Gran parte de esa diferencia viene del nivel socioeconómico de los alumnos.\"",
+  "\"Mas a escola não controla a renda das famílias.\"":"\"Pero la escuela no controla el ingreso de las familias.\"",
+  "\"O que a escola e o governo podem mudar é a estrutura: infraestrutura, tamanho, professores.\"":"\"Lo que la escuela y el gobierno pueden cambiar es la estructura: infraestructura, tamaño, docentes.\"",
+  "\"Então a nossa pergunta é: as características estruturais de uma escola predizem a nota média dos seus alunos no ENEM?\"":"\"Entonces nuestra pregunta es: ¿las características estructurales de una escuela predicen la nota promedio de sus alumnos en el ENEM?\"",
+  "\"E também: quanto a estrutura explica além da rede pública ou privada?\"":"\"Y también: ¿cuánto explica la estructura más allá de la red pública o privada?\"",
+  /* 3 */
+  "Os dados":"Los datos","Dois conjuntos públicos do INEP":"Dos conjuntos públicos del INEP",
+  "média das notas por escola":"promedio de las notas por escuela","45 atributos da escola":"45 atributos de la escuela",
+  "Junção por escola":"Unión por escuela","escolas":"escuelas",
+  "31 infraestrutura":"31 de infraestructura","9 contagens":"9 conteos","5 rede e localização":"5 de red y ubicación",
+  "Regressão: prever a nota média":"Regresión: predecir la nota promedio",
+  "\"Usamos dois dados públicos do INEP: os microdados do ENEM 2025 e do Censo Escolar 2024.\"":"\"Usamos dos fuentes públicas del INEP: los microdatos del ENEM 2025 y del Censo Escolar 2024.\"",
+  "\"Para cada escola, calculamos a média das notas dos alunos presentes nas quatro provas. Essa é a variável alvo.\"":"\"Para cada escuela, calculamos el promedio de las notas de los alumnos presentes en las cuatro pruebas. Esa es la variable objetivo.\"",
+  "\"Ficamos com escolas que têm pelo menos dez candidatos, para a média não depender de poucos alunos.\"":"\"Nos quedamos con las escuelas que tienen al menos diez candidatos, para que el promedio no dependa de pocos alumnos.\"",
+  "\"No final temos 23.374 escolas e 45 atributos: 31 indicadores de infraestrutura, 9 contagens de tamanho e recursos, e 5 de rede e localização.\"":"\"Al final tenemos 23.374 escuelas y 45 atributos: 31 indicadores de infraestructura, 9 conteos de tamaño y recursos, y 5 de red y ubicación.\"",
+  "\"É um problema de regressão: queremos prever um número, a nota média.\"":"\"Es un problema de regresión: queremos predecir un número, la nota promedio.\"",
+  /* 4 */
+  "Análise exploratória":"Análisis exploratorio","A rede separa as escolas":"La red separa a las escuelas",
+  "Histograma da nota média por escola":"Histograma de la nota promedio por escuela",
+  "Nota média por rede administrativa":"Nota promedio por red administrativa","Nota média por região":"Nota promedio por región",
+  "média":"media","· desvio":"· desviación","estaduais":"estaduales","· privadas":"· privadas",
+  "Merenda escolar × nota: ρ = −0,67":"Alimentación escolar × nota: ρ = −0,67",
+  "(apontando os gráficos) \"Aqui está a distribuição da nota média das escolas.\"":"(señalando los gráficos) \"Aquí está la distribución de la nota promedio de las escuelas.\"",
+  "\"A média é 524,7 pontos e o desvio padrão é 62,4.\"":"\"El promedio es 524,7 puntos y la desviación estándar es 62,4.\"",
+  "\"A rede separa muito as escolas.\"":"\"La red separa mucho a las escuelas.\"",
+  "\"As estaduais, que são cerca de 70% das escolas, têm média de 492,9.\"":"\"Las estaduales, que son cerca del 70% de las escuelas, tienen un promedio de 492,9.\"",
+  "\"As privadas têm 599,4.\"":"\"Las privadas tienen 599,4.\"",
+  "\"Por região a diferença é menor, mas consistente: do Norte, com 488,2, ao Sudeste, com 539,9.\"":"\"Por región la diferencia es menor, pero consistente: del Norte, con 488,2, al Sudeste, con 539,9.\"",
+  "\"O atributo mais associado à nota é a merenda escolar, com correlação de menos 0,67. Ela é quase um indicador de escola pública.\"":"\"El atributo más asociado a la nota es la alimentación escolar (merenda), con una correlación de menos 0,67. Es casi un indicador de escuela pública.\"",
+  /* 5 */
+  "Qualidade dos dados":"Calidad de los datos","Problemas encontrados e tratados":"Problemas encontrados y tratados",
+  "no máximo 1,95% por atributo":"máximo 1,95% por atributo","15 escolas: vira faltante":"15 escuelas: pasa a faltante",
+  "Contagens assimétricas":"Conteos asimétricos","transformação log":"transformación log","Redundantes":"Redundantes",
+  "região e turmas: removidos":"región y n.º de cursos: eliminados","Inconsistências entre fontes":"Inconsistencias entre fuentes",
+  "escolas mantidas (mudança de oferta)":"escuelas conservadas (cambio de oferta)",
+  "\"Os dados faltantes são poucos: no máximo 1,95% em um atributo.\"":"\"Los datos faltantes son pocos: como máximo 1,95% en un atributo.\"",
+  "\"Encontramos um código especial do INEP, 88888. Ele não é uma quantidade real: significa 'valor extremo'. Aparece em 15 escolas, nos computadores por aluno. Nós o tratamos como dado faltante.\"":"\"Encontramos un código especial del INEP, 88888. No es una cantidad real: significa 'valor extremo'. Aparece en 15 escuelas, en los computadores por alumno. Lo tratamos como dato faltante.\"",
+  "\"As contagens são muito assimétricas, porque existem escolas muito grandes. Por isso usamos logaritmo.\"":"\"Los conteos son muy asimétricos, porque existen escuelas muy grandes. Por eso usamos logaritmo.\"",
+  "\"Todos esses problemas são tratados no pré-processamento, que o meu colega vai explicar.\"":"\"Todos estos problemas se tratan en el preprocesamiento, que mi compañero va a explicar.\"",
+  "Passagem: \"Agora o [nome] vai explicar como avaliamos os modelos.\"":"Transición: \"Ahora [nombre] va a explicar cómo evaluamos los modelos.\"",
+  /* 6 */
+  "Metodologia":"Metodología","Protocolo completo de avaliação":"Protocolo completo de evaluación",
+  "Junção":"Unión","23.374 escolas · 45 atributos":"23.374 escuelas · 45 atributos","ajustado só no treino":"ajustado solo con el entrenamiento",
+  "CV externa":"VC externa","5 dobras por município × 3 = 15":"5 pliegues por municipio × 3 = 15",
+  "CV interna":"VC interna","GroupKFold(3) + grid search":"GroupKFold(3) + grid search",
+  "Comparação":"Comparación","6 algoritmos + baselines · Friedman + Nemenyi":"6 algoritmos + baselines · Friedman + Nemenyi",
+  "Melhor modelo":"Mejor modelo","Gradient Boosting ajustado":"Gradient Boosting ajustado",
+  "Interpretação":"Interpretación","SHAP · variantes A/B/C · resíduos":"SHAP · variantes A/B/C · residuos",
+  "(rascunho — ajustar pelo apresentador)":"(borrador — ajustar por quien presenta)",
+  "Visão geral do procedimento: todos os algoritmos usam o mesmo pré-processamento e as mesmas partições.":"Visión general del procedimiento: todos los algoritmos usan el mismo preprocesamiento y las mismas particiones.",
+  "Junção ENEM + Censo → pré-processamento dentro de um Pipeline → CV externa (5 dobras agrupadas por município × 3 repetições = 15 partições, compartilhadas por todos os algoritmos).":"Unión ENEM + Censo → preprocesamiento dentro de un Pipeline → VC externa (5 pliegues agrupados por municipio × 3 repeticiones = 15 particiones, compartidas por todos los algoritmos).",
+  "CV interna GroupKFold(3) para escolher hiperparâmetros (CV aninhada); comparação de 6 algoritmos + baselines com Friedman e Nemenyi.":"VC interna GroupKFold(3) para elegir hiperparámetros (VC anidada); comparación de 6 algoritmos + baselines con Friedman y Nemenyi.",
+  "Melhor modelo: Gradient Boosting ajustado; depois, interpretação com SHAP, variantes A/B/C e resíduos por rede × região.":"Mejor modelo: Gradient Boosting ajustado; después, interpretación con SHAP, variantes A/B/C y residuos por red × región.",
+  /* 7 */
+  "Pipeline sem vazamento de dados":"Pipeline sin fuga de datos","ERRADO":"INCORRECTO","CERTO":"CORRECTO",
+  "1. Pré-processar":"1. Preprocesar","todos":"todos","os dados":"los datos",
+  "2. Separar treino / teste":"2. Separar entrenamiento / prueba","3. Ajustar e avaliar":"3. Ajustar y evaluar",
+  "O teste vaza para o pré-processamento":"La prueba se filtra al preprocesamiento",
+  "1. Separar treino / teste":"1. Separar entrenamiento / prueba","2. Pipeline aprende":"2. El Pipeline aprende","só no treino":"solo con el entrenamiento",
+  "3. Aplica ao teste e avalia":"3. Aplica a la prueba y evalúa",
+  "Medianas, escalas e categorias só do treino":"Medianas, escalas y categorías solo del entrenamiento",
+  "Todo passo que aprende dos dados (medianas, modas, médias, escalas, categorias) faz parte de um Pipeline do scikit-learn junto com o modelo.":"Todo paso que aprende de los datos (medianas, modas, medias, escalas, categorías) forma parte de un Pipeline de scikit-learn junto con el modelo.",
+  "Assim ele é ajustado só nas escolas de treino de cada dobra: nenhuma informação das escolas de teste vaza.":"Así se ajusta solo con las escuelas de entrenamiento de cada pliegue: no se filtra ninguna información de las escuelas de prueba.",
+  "Pré-processamento: remove região e nº de turmas (redundantes); 88888 vira faltante + indicador; contagens (8): mediana, log(1+x), padronização; binários (31 + 2): moda, sem escala; categóricos: moda + one-hot. Resultado: 79 colunas.":"Preprocesamiento: elimina región y n.º de cursos (redundantes); 88888 pasa a faltante + indicador; conteos (8): mediana, log(1+x), estandarización; binarios (31 + 2): moda, sin escala; categóricos: moda + one-hot. Resultado: 79 columnas.",
+  /* 8 */
+  "Dobras agrupadas por município":"Pliegues agrupados por municipio",
+  "Cinco dobras; cada município fica inteiro em uma só dobra":"Cinco pliegues; cada municipio queda completo en un solo pliegue",
+  "Sorteia-se município, não escola":"Se sortea el municipio, no la escuela","5 dobras × 3 repetições":"5 pliegues × 3 repeticiones",
+  "Mesmas partições para todos":"Mismas particiones para todos",
+  "Escolas do mesmo município compartilham contexto socioeconômico e tendem a ter notas parecidas. Se fossem separadas entre treino e teste, o modelo preveria uma escola pelas vizinhas e o erro seria subestimado.":"Las escuelas del mismo municipio comparten contexto socioeconómico y tienden a tener notas parecidas. Si se separaran entre entrenamiento y prueba, el modelo predeciría una escuela a partir de sus vecinas y el error se subestimaría.",
+  "Por isso usamos GroupKFold: são os 5.201 municípios, e não as escolas, que são atribuídos às dobras.":"Por eso usamos GroupKFold: son los 5.201 municipios, y no las escuelas, los que se asignan a los pliegues.",
+  "5 dobras repetidas 3 vezes, cada repetição com outro embaralhamento (semente 42 + r) = 15 medições por algoritmo. As dobras são calculadas uma vez e compartilhadas: comparações pareadas.":"5 pliegues repetidos 3 veces, cada repetición con otra mezcla (semilla 42 + r) = 15 mediciones por algoritmo. Los pliegues se calculan una vez y se comparten: comparaciones pareadas.",
+  /* 9 */
+  "Spot-checking · Friedman + Nemenyi":"Spot-checking · Friedman + Nemenyi","Seis algoritmos, hiperparâmetros padrão":"Seis algoritmos, hiperparámetros por defecto",
+  "RMSE de cada algoritmo nas 15 partições":"RMSE de cada algoritmo en las 15 particiones",
+  "SVR, RF e GB empatados":"SVR, RF y GB empatados","Diagrama de diferença crítica":"Diagrama de diferencia crítica",
+  "Seis algoritmos com vieses diferentes e hiperparâmetros padrão: regressão linear, kNN, árvore, SVR (RBF), random forest e gradient boosting. No SVR o alvo é padronizado durante o treino.":"Seis algoritmos con sesgos distintos e hiperparámetros por defecto: regresión lineal, kNN, árbol, SVR (RBF), random forest y gradient boosting. En el SVR el objetivo se estandariza durante el entrenamiento.",
+  "Todos melhoram sobre a baseline da média. RMSE: SVR 30,77; RF 30,99; GB 31,65; kNN 33,91; linear 34,24; árvore 43,51 (sem poda, sobreajusta).":"Todos mejoran sobre el baseline de la media. RMSE: SVR 30,77; RF 30,99; GB 31,65; kNN 33,91; lineal 34,24; árbol 43,51 (sin poda, sobreajusta).",
+  "Friedman rejeita a equivalência (χ² = 73,10; p = 2,3 × 10⁻¹⁴). Postos médios: SVR 1,07; RF 1,93; GB 3,00; kNN 4,20; linear 4,80; árvore 6,00. Diferença crítica de Nemenyi = 1,95.":"Friedman rechaza la equivalencia (χ² = 73,10; p = 2,3 × 10⁻¹⁴). Rangos promedio: SVR 1,07; RF 1,93; GB 3,00; kNN 4,20; lineal 4,80; árbol 6,00. Diferencia crítica de Nemenyi = 1,95.",
+  "SVR e RF são melhores que kNN, linear e árvore; GB é melhor que a árvore; os três líderes não se distinguem. Levamos os três (e a árvore) para o ajuste.":"SVR y RF son mejores que kNN, lineal y árbol; GB es mejor que el árbol; los tres líderes no se distinguen. Llevamos los tres (y el árbol) al ajuste.",
+  "Cuidado: os p-valores são otimistas, pois as medições não são independentes.":"Cuidado: los valores p son optimistas, porque las mediciones no son independientes.",
+  "Árvore (6,00)":"Árbol (6,00)","Linear (4,80)":"Lineal (4,80)",
+  /* 10 */
+  "Validação cruzada aninhada":"Validación cruzada anidada","Otimização sem otimismo":"Optimización sin optimismo",
+  "CV externa":"VC externa","· mede o erro":"· mide el error","5 dobras agrupadas × 3 repetições":"5 pliegues agrup. × 3 repeticiones",
+  "CV interna":"VC interna","· escolhe":"· elige",
+  "padrão":"base","ajustado":"ajustado","Árvore":"Árbol",
+  "Escolher hiperparâmetros nos mesmos dados que estimam o desempenho dá estimativa otimista; a CV aninhada evita isso.":"Elegir hiperparámetros con los mismos datos que estiman el desempeño da una estimación optimista; la VC anidada lo evita.",
+  "Laço externo: o mesmo protocolo 3 × 5 agrupado, que mede o erro. Dentro de cada treino externo: GridSearchCV com 3 dobras também agrupadas por município, escolhendo por RMSE; o modelo escolhido é reajustado e avaliado uma vez no teste externo.":"Lazo externo: el mismo protocolo 3 × 5 agrupado, que mide el error. Dentro de cada entrenamiento externo: GridSearchCV con 3 pliegues también agrupados por municipio, eligiendo por RMSE; el modelo elegido se reajusta y se evalúa una vez en la prueba externa.",
+  "Agrupar as dobras internas importa: senão a busca favoreceria modelos que exploram escolas vizinhas (ex.: kNN com k pequeno). Grades pequenas (cada combinação treina 45 vezes).":"Agrupar los pliegues internos importa: si no, la búsqueda favorecería modelos que explotan escuelas vecinas (p. ej., kNN con k pequeño). Grillas pequeñas (cada combinación entrena 45 veces).",
+  "Resultados (RMSE ajustado): GB 30,63; SVR 30,68; RF 30,91; árvore 43,51 → 33,31 (max_depth = 10 nas 15 buscas). Hiperparâmetros estáveis; alguns na borda da grade. Toda a CV aninhada levou ~17 min.":"Resultados (RMSE ajustado): GB 30,63; SVR 30,68; RF 30,91; árbol 43,51 → 33,31 (max_depth = 10 en las 15 búsquedas). Hiperparámetros estables; algunos en el borde de la grilla. Toda la VC anidada tomó ~17 min.",
+  /* 11 */
+  "Resultados":"Resultados","Melhor modelo: Gradient Boosting ajustado":"Mejor modelo: Gradient Boosting ajustado",
+  "Prever a média":"Predecir la media","Só a rede":"Solo la red","Regressão linear (A)":"Regresión lineal (A)",
+  "RMSE 30,6 pontos":"RMSE 30,6 puntos",
+  "RMSE em pontos do ENEM; menor é melhor. GB e SVR: empate estatístico.":"RMSE en puntos del ENEM; menor es mejor. GB y SVR: empate estadístico.",
+  "Gradient Boosting ajustado: RMSE 30,63 (R² = 0,757). Prever só a média dá 62,4 (o desvio padrão do alvo); conhecer só a rede já dá 39,7 (R² 0,59); a regressão linear com todos os atributos dá 34,3 (R² 0,70).":"Gradient Boosting ajustado: RMSE 30,63 (R² = 0,757). Predecir solo la media da 62,4 (la desviación estándar del objetivo); conocer solo la red ya da 39,7 (R² 0,59); la regresión lineal con todos los atributos da 34,3 (R² 0,70).",
+  "Hiperparâmetros escolhidos nas 15 dobras: learning_rate = 0,05 e max_depth = 5.":"Hiperparámetros elegidos en los 15 pliegues: learning_rate = 0,05 y max_depth = 5.",
+  "Friedman de novo rejeita (p = 3,4 × 10⁻⁸); postos: GB 1,40; SVR 1,73; RF 2,87; árvore 4,00; CD = 1,21. GB e SVR não se separam; os três melhores ficam a 0,3 ponto de RMSE entre si.":"Friedman vuelve a rechazar (p = 3,4 × 10⁻⁸); rangos: GB 1,40; SVR 1,73; RF 2,87; árbol 4,00; CD = 1,21. GB y SVR no se separan; los tres mejores quedan a 0,3 punto de RMSE entre sí.",
+  "Escolhemos GB para interpretar: menor erro, melhor posto médio e SHAP exato e rápido para ensembles de árvores.":"Elegimos GB para interpretar: menor error, mejor rango promedio y SHAP exacto y rápido para ensembles de árboles.",
+  /* 12 */
+  "Interpretação · SHAP":"Interpretación · SHAP","A rede domina as previsões":"La red domina las predicciones",
+  "SHAP beeswarm do Gradient Boosting":"SHAP beeswarm del Gradient Boosting",
+  "Rede estadual":"Red estadual","37,7 pts · 7× o 2º atributo":"37,7 pts · 7× el 2.º atributo",
+  "Professores do EM":"Docentes de educación media","5,2 pts":"5,2 pts",
+  "Estado e esgoto":"Estado y alcantarillado","MG, SP, RS · rede de esgoto":"MG, SP, RS · red de alcantarillado",
+  "SHAP dos 15 atributos mais importantes. O indicador de escola estadual (TP_DEPENDENCIA_2) tem |SHAP| médio de 37,7 pontos, sete vezes o do segundo atributo. Ser estadual reduz a previsão em cerca de 30 pontos; não ser eleva em 50 a 85.":"SHAP de los 15 atributos más importantes. El indicador de escuela estadual (TP_DEPENDENCIA_2) tiene |SHAP| promedio de 37,7 puntos, siete veces el del segundo atributo. Ser estadual reduce la predicción en cerca de 30 puntos; no serlo la eleva entre 50 y 85.",
+  "Entre os atributos estruturais, o mais importante é o nº de professores do EM (QT_DOC_MED, 5,2 pontos): poucas escolas com poucos professores perdem até ~40 pontos.":"Entre los atributos estructurales, el más importante es el n.º de docentes de educación media (QT_DOC_MED, 5,2 puntos): pocas escuelas con pocos docentes pierden hasta ~40 puntos.",
+  "O estado também pesa: estar em MG, SP ou RS eleva a previsão. Esgoto, salas climatizadas, laboratório de ciências, computadores e tempo integral elevam; merenda reduz (proxy da rede pública).":"El estado también pesa: estar en MG, SP o RS eleva la predicción. Alcantarillado, salas climatizadas, laboratorio de ciencias, computadores y jornada completa elevan; la alimentación escolar (merenda) reduce (proxy de la red pública).",
+  "SHAP explica o modelo, não as causas do desempenho.":"SHAP explica el modelo, no las causas del desempeño.",
+  /* 13 */
+  "Quanto a rede explica?":"¿Cuánto explica la red?","Linear":"Lineal",
+  "A · todos":"A · todos","B · sem rede":"B · sin red","C · sem rede e merenda":"C · sin red ni alimentación",
+  "Resíduos por rede administrativa":"Residuos por red administrativa",
+  "Federais: +13,1 no Sudeste · −12,7 no Norte":"Federales: +13,1 en el Sudeste · −12,7 en el Norte",
+  "Variantes: A (todos os atributos), B (sem a rede administrativa), C (sem rede e sem merenda). R² do GB: 0,76 / 0,73 / 0,64; linear: 0,70 / 0,64 / 0,50.":"Variantes: A (todos los atributos), B (sin la red administrativa), C (sin red y sin alimentación escolar). R² del GB: 0,76 / 0,73 / 0,64; lineal: 0,70 / 0,64 / 0,50.",
+  "Sem a rede, o GB perde metade do que perde o linear (0,76 → 0,73 contra 0,70 → 0,64): combinando os outros atributos ele reconstrói em parte se a escola é pública ou privada. Sem rede nem merenda, o GB ainda explica R² 0,64 (RMSE 37,4) contra 0,50 do linear.":"Sin la red, el GB pierde la mitad de lo que pierde el lineal (0,76 → 0,73 contra 0,70 → 0,64): combinando los otros atributos reconstruye en parte si la escuela es pública o privada. Sin red ni alimentación escolar, el GB aún explica R² 0,64 (RMSE 37,4) contra 0,50 del lineal.",
+  "Resíduos (observado − previsto, primeira partição, RMSE 30,7): estaduais e privadas têm resíduo médio perto de zero em todas as regiões. Privadas são mais dispersas (desvio 34–40 contra ~27 das estaduais): perfil socioeconômico não medido.":"Residuos (observado − predicho, primera partición, RMSE 30,7): estaduales y privadas tienen residuo promedio cercano a cero en todas las regiones. Las privadas son más dispersas (desviación 34–40 contra ~27 de las estaduales): perfil socioeconómico no medido.",
+  "Federais mudam de sinal por região: +13,1 no Sudeste, +6,5 no Sul, −12,7 no Norte, −13,4 no Centro-Oeste. Com ~600 federais, o modelo aprende um efeito médio que não vale em toda parte.":"Las federales cambian de signo según la región: +13,1 en el Sudeste, +6,5 en el Sur, −12,7 en el Norte, −13,4 en el Centro-Oeste. Con ~600 federales, el modelo aprende un efecto promedio que no vale en todas partes.",
+  /* 14 */
+  "Conclusões":"Conclusiones","Conclusões e limitações":"Conclusiones y limitaciones","Limitações":"Limitaciones",
+  "A estrutura prediz muito: R² 0,76":"La estructura predice mucho: R² 0,76",
+  "Boa parte vem da rede pública/privada":"Buena parte viene de la red pública/privada",
+  "Sem a rede: ainda R² 0,73":"Sin la red: aún R² 0,73",
+  "Associação ≠ causa":"Asociación ≠ causa",
+  "Nível da escola, um só ano do ENEM":"Nivel de escuela, un solo año del ENEM",
+  "Censo 2024; sem indicador socioeconômico":"Censo 2024; sin indicador socioeconómico",
+  "Em 23.374 escolas, com protocolo contra estimativas infladas (CV agrupada por município, partições idênticas, ajuste aninhado), a estrutura prediz grande parte da nota: RMSE 30,6 (R² 0,76) contra 62,4 da média e 39,7 só com a rede. GB, SVR e RF ficam a 0,3 ponto: o protocolo e os atributos importam mais que o algoritmo.":"En 23.374 escuelas, con un protocolo contra estimaciones infladas (VC agrupada por municipio, particiones idénticas, ajuste anidado), la estructura predice gran parte de la nota: RMSE 30,6 (R² 0,76) contra 62,4 de la media y 39,7 solo con la red. GB, SVR y RF quedan a 0,3 punto: el protocolo y los atributos importan más que el algoritmo.",
+  "A maior parte do poder preditivo está ligada à rede pública/privada; a merenda é um segundo proxy. Sem a rede, o GB perde pouco (R² 0,73).":"La mayor parte del poder predictivo está ligada a la red pública/privada; la alimentación escolar (merenda) es un segundo proxy. Sin la red, el GB pierde poco (R² 0,73).",
+  "Limitações: resultados são associações, não causas; análise no nível da escola (não descreve alunos), só escolas com ≥ 10 candidatos; um só ano de ENEM e Censo 2024 (253 escolas sem matrícula no EM, 276 com mais candidatos que matrículas); alguns hiperparâmetros na borda da grade; p-valores otimistas.":"Limitaciones: los resultados son asociaciones, no causas; análisis a nivel de escuela (no describe alumnos), solo escuelas con ≥ 10 candidatos; un solo año de ENEM y Censo 2024 (253 escuelas sin matrícula en educación media, 276 con más candidatos que matrículas); algunos hiperparámetros en el borde de la grilla; valores p optimistas.",
+  "Trabalhos futuros: indicador socioeconômico; várias edições do ENEM com validação temporal; escolas que vão muito acima do previsto pela estrutura.":"Trabajos futuros: indicador socioeconómico; varias ediciones del ENEM con validación temporal; escuelas que rinden muy por encima de lo predicho por la estructura.",
+  /* 15 */
+  "Reprodutibilidade":"Reproducibilidad","Reprodutibilidade e uso de IA":"Reproducibilidad y uso de IA",
+  "Repo público":"Repo público","código, dados e resultados no GitHub":"código, datos y resultados en GitHub",
+  "Notebooks":"Notebooks","com saídas; local ou Colab":"con salidas; local o Colab",
+  "Sementes":"Semillas","fixas: 42 e 42 + r":"fijas: 42 y 42 + r",
+  "Versões":"Versiones","Hashes":"Hashes","SHA-256 dos dados do INEP":"SHA-256 de los datos del INEP",
+  "IA declarada":"IA declarada","Claude como apoio, com revisão humana":"Claude como apoyo, con revisión humana",
+  "Repositório público: github.com/emersonheto/enem-school-performance. Um script baixa os arquivos do INEP, registra URL e hash SHA-256 e constrói a tabela; os notebooks conferem os hashes antes de rodar.":"Repositorio público: github.com/emersonheto/enem-school-performance. Un script descarga los archivos del INEP, registra la URL y el hash SHA-256 y construye la tabla; los notebooks verifican los hashes antes de ejecutarse.",
+  "Pré-processamento, dobras e avaliação implementados uma vez em src/enem_school/ e usados por todos os notebooks; testes unitários (pytest). Quatro notebooks, com saídas, rodam localmente ou no Google Colab.":"Preprocesamiento, pliegues y evaluación implementados una vez en src/enem_school/ y usados por todos los notebooks; pruebas unitarias (pytest). Cuatro notebooks, con salidas, se ejecutan localmente o en Google Colab.",
+  "Versões fixadas (Python 3.12, scikit-learn 1.9.1, SHAP 0.54.1); sementes fixas (42, e 42 + r na repetição r). As métricas se reproduzem exatamente na mesma plataforma.":"Versiones fijadas (Python 3.12, scikit-learn 1.9.1, SHAP 0.54.1); semillas fijas (42, y 42 + r en la repetición r). Las métricas se reproducen exactamente en la misma plataforma.",
+  "Uso de IA: o Claude foi apoio para gerar/refatorar código e melhorar a redação; todas as decisões foram dos autores e tudo passou por revisão humana.":"Uso de IA: Claude fue un apoyo para generar/refactorizar código y mejorar la redacción; todas las decisiones fueron de los autores y todo pasó por revisión humana.",
+  /* 16 */
+  "Obrigado!":"¡Gracias!","Perguntas?":"¿Preguntas?",
+  "(rascunho — ajustar pelo apresentador) \"Obrigado. Todo o código e os resultados estão no repositório público. Ficamos à disposição para perguntas.\"":"(borrador — ajustar por quien presenta) \"Gracias. Todo el código y los resultados están en el repositorio público. Quedamos a disposición para preguntas.\"",
+  "Se não entender a pergunta: \"Desculpe, pode repetir, por favor?\" · \"Pode falar um pouco mais devagar?\"":"Si no se entiende la pregunta: \"Disculpe, ¿puede repetir, por favor?\" · \"¿Puede hablar un poco más despacio?\""
+  };
+  [1,2,3,4].forEach(function(i){ES['Dobra '+i]='Pliegue '+i;});
+  ES['Dobra 5 · teste']='Pliegue 5 · prueba';
+  'ABCDEFGHIJ'.split('').forEach(function(c){ES['Município '+c]='Municipio '+c;});
+  var LS_KEY='apresentacao-lang',lang='pt';
+  function T(k){return lang==='es'&&Object.prototype.hasOwnProperty.call(ES,k)?ES[k]:k;}
+  function applyLang(){
+    var tw=document.createTreeWalker(stage,NodeFilter.SHOW_TEXT,null),n,list=[];
+    while((n=tw.nextNode()))list.push(n);
+    list.forEach(function(t){
+      if(t.__pt===undefined)t.__pt=t.nodeValue;
+      var k=t.__pt.trim();if(!k)return;
+      var m=t.__pt.match(/^(\s*)[\s\S]*?(\s*)$/);
+      t.nodeValue=m[1]+T(k)+m[2];
+    });
+    [].forEach.call(document.querySelectorAll('[alt],[aria-label]'),function(e){
+      ['alt','aria-label'].forEach(function(a){
+        if(!e.hasAttribute(a))return;
+        var p='data-pt-'+a;if(!e.hasAttribute(p))e.setAttribute(p,e.getAttribute(a));
+        e.setAttribute(a,T(e.getAttribute(p)));
+      });
+    });
+    if(document.documentElement.__t===undefined)document.documentElement.__t=document.title;
+    document.title=T(document.documentElement.__t);
+    var ft=document.getElementById('fold-test');if(ft)ft.setAttribute('font-size',lang==='es'?22:26); /* rótulo ES é mais longo */
+    document.documentElement.lang=lang==='es'?'es':'pt-BR';
+    [].forEach.call(document.querySelectorAll('#lang button'),function(b){b.classList.toggle('on',b.dataset.l===lang);b.setAttribute('aria-pressed',b.dataset.l===lang);});
+  }
+  function setLang(l){
+    lang=(l==='es')?'es':'pt';
+    try{localStorage.setItem(LS_KEY,lang);}catch(e){}
+    applyLang();render();
+  }
+  slides.forEach(function(sl,i){
+    var f=document.createElement('div');f.className='foot';
+    if(!sl.classList.contains('cover'))f.innerHTML='<span>CMP263 · UFRGS · 2026/2</span><span><b>'+(i+1)+'</b> / '+N+'</span>';
+    else f.innerHTML='<span></span><span><b>'+(i+1)+'</b> / '+N+'</span>';
+    sl.appendChild(f);
+  });
+  function fit(){
+    var vw=innerWidth,vh=innerHeight*(document.body.classList.contains('notas')?0.66:1);
+    var sc=Math.min(vw/1280,vh/720);
+    stage.style.transform='translate('+((vw-1280*sc)/2)+'px,'+((vh-720*sc)/2)+'px) scale('+sc+')';
+  }
+  function render(){
+    slides.forEach(function(sl,i){sl.classList.toggle('active',i===cur);});
+    var sl=slides[cur],n=sl.querySelector('.notes');
+    panel.innerHTML='<div class="meta"><span class="who">'+T('Apresenta')+': '+T(sl.dataset.who)+'</span><span class="tag">'+T(sl.dataset.bloco)+'</span><span class="tag">'+T('Slide')+' '+(cur+1)+' / '+N+'</span></div>'+(n?n.innerHTML:'');
+    if(location.hash!=='#'+(cur+1))history.replaceState(null,'','#'+(cur+1));
+  }
+  function go(i){cur=Math.max(0,Math.min(N-1,i));render();}
+  function toggleNotes(){document.body.classList.toggle('notas');fit();}
+  addEventListener('keydown',function(e){
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    var k=e.key;
+    if(k==='ArrowRight'||k===' '||k==='PageDown'||k==='Enter'){e.preventDefault();go(cur+1);}
+    else if(k==='ArrowLeft'||k==='PageUp'||k==='Backspace'){e.preventDefault();go(cur-1);}
+    else if(k==='Home')go(0); else if(k==='End')go(N-1);
+    else if(k==='n'||k==='N')toggleNotes();
+    else if(k==='l'||k==='L')setLang(lang==='es'?'pt':'es');
+    else if(k==='f'||k==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();}
+  });
+  var tx=null;
+  addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});
+  addEventListener('touchend',function(e){if(tx===null)return;var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)go(cur+(dx<0?1:-1));tx=null;});
+  addEventListener('resize',fit);
+  document.addEventListener('fullscreenchange',function(){document.body.classList.toggle('fs',!!document.fullscreenElement);});
+  [].forEach.call(document.querySelectorAll('#lang button'),function(b){b.addEventListener('click',function(){setLang(b.dataset.l);b.blur();});});
+  addEventListener('hashchange',function(){var n=parseInt(location.hash.slice(1),10);if(n&&n-1!==cur)go(n-1);});
+  if(/[?&]notas/.test(location.search))document.body.classList.add('notas');
+  var h=parseInt(location.hash.slice(1),10);if(h)cur=Math.max(0,Math.min(N-1,h-1));
+  (function(){
+    var q=location.search.match(/[?&]lang=(pt|es)\b/i),saved=null;
+    try{saved=localStorage.getItem(LS_KEY);}catch(e){}
+    var l=q?q[1].toLowerCase():saved;
+    lang=(l==='es')?'es':'pt';
+    if(q){try{localStorage.setItem(LS_KEY,lang);}catch(e){}}
+  })();
+  fit();applyLang();render();
+})();
+</script>
+</body>
+</html>
