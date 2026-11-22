@@ -151,7 +151,7 @@ body.fs #lang{display:none}
 <div id="stage">
 
 <!-- ======================= 1. CAPA ======================= -->
-<section class="slide cover" data-who="Emerson" data-bloco="Bloco 1 · Problema e dados (~3 min 15 s)">
+<section class="slide cover" data-who="Emerson" data-bloco="Bloco 1 · Problema, dados e protocolo (~4 min)">
   <div class="logos">
     <span class="tile"><img src="assets/logo-ufrgs.svg" alt="UFRGS" height="76"></span>
     <img src="assets/logo-inf.jpg" alt="Instituto de Informática – UFRGS" height="76">
@@ -171,7 +171,7 @@ body.fs #lang{display:none}
 </section>
 
 <!-- ======================= 2. A PERGUNTA ======================= -->
-<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema e dados (~3 min 15 s)">
+<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema, dados e protocolo (~4 min)">
   <div class="kicker"><i data-i="help"></i>A pergunta</div>
   <h2>ENEM · escola · estrutura</h2>
   <div class="body">
@@ -197,7 +197,7 @@ body.fs #lang{display:none}
 </section>
 
 <!-- ======================= 3. OS DADOS ======================= -->
-<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema e dados (~3 min 15 s)">
+<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema, dados e protocolo (~4 min)">
   <div class="kicker"><i data-i="db"></i>Os dados</div>
   <h2>Dois conjuntos públicos do INEP</h2>
   <div class="body">
@@ -228,7 +228,7 @@ body.fs #lang{display:none}
 </section>
 
 <!-- ======================= 4. EDA ======================= -->
-<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema e dados (~3 min 15 s)">
+<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema, dados e protocolo (~4 min)">
   <div class="kicker"><i data-i="chart"></i>Análise exploratória</div>
   <h2>A rede separa as escolas</h2>
   <div class="body" style="gap:14px">
@@ -251,7 +251,7 @@ body.fs #lang{display:none}
 </section>
 
 <!-- ======================= 5. QUALIDADE ======================= -->
-<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema e dados (~3 min 15 s)">
+<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema, dados e protocolo (~4 min)">
   <div class="kicker"><i data-i="shield"></i>Qualidade dos dados</div>
   <h2>Problemas encontrados e tratados</h2>
   <div class="body">
@@ -267,13 +267,13 @@ body.fs #lang{display:none}
     <li>"Os dados faltantes são poucos: no máximo 1,95% em um atributo."</li>
     <li>"Encontramos um código especial do INEP, 88888. Ele não é uma quantidade real: significa 'valor extremo'. Aparece em 15 escolas, nos computadores por aluno. Nós o tratamos como dado faltante."</li>
     <li>"As contagens são muito assimétricas, porque existem escolas muito grandes. Por isso usamos logaritmo."</li>
-    <li>"Todos esses problemas são tratados no pré-processamento, que o meu colega vai explicar."</li>
-    <li>Passagem: "Agora o [nome] vai explicar como avaliamos os modelos."</li>
+    <li>"Todos esses problemas são tratados no pré-processamento."</li>
+    <li>Passagem: "Agora vou mostrar o caminho completo do trabalho."</li>
   </ul></aside>
 </section>
 
 <!-- ======================= 6. PROTOCOLO ======================= -->
-<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~4 min)">
+<section class="slide" data-who="Emerson" data-bloco="Bloco 1 · Problema, dados e protocolo (~4 min)">
   <div class="kicker"><i data-i="layers"></i>Metodologia</div>
   <h2>Protocolo completo de avaliação</h2>
   <div class="body" style="gap:10px">
@@ -297,16 +297,17 @@ body.fs #lang{display:none}
     </div>
   </div>
   <aside class="notes"><ul>
-    <li>(rascunho — ajustar pelo apresentador)</li>
-    <li>Visão geral do procedimento: todos os algoritmos usam o mesmo pré-processamento e as mesmas partições.</li>
-    <li>Junção ENEM + Censo → pré-processamento dentro de um Pipeline → CV externa (5 dobras agrupadas por município × 3 repetições = 15 partições, compartilhadas por todos os algoritmos).</li>
-    <li>CV interna GroupKFold(3) para escolher hiperparâmetros (CV aninhada); comparação de 6 algoritmos + baselines com Friedman e Nemenyi.</li>
-    <li>Melhor modelo: Gradient Boosting ajustado; depois, interpretação com SHAP, variantes A/B/C e resíduos por rede × região.</li>
-  </ul></aside>
+    <li>Antes de entrar nos detalhes, este é o caminho completo do trabalho.</li>
+    <li>Juntamos o ENEM e o Censo: 23.374 escolas.</li>
+    <li>Todo o pré-processamento fica dentro de um Pipeline, ajustado só no treino.</li>
+    <li>Avaliamos com 5 dobras agrupadas por município, repetidas 3 vezes, e uma validação cruzada interna para escolher os hiperparâmetros.</li>
+    <li>Comparamos seis algoritmos, escolhemos o melhor e depois interpretamos.</li>
+    <li>Agora o meu colega vai explicar cada passo da metodologia.</li>
+</ul></aside>
 </section>
 
 <!-- ======================= 7. SEM VAZAMENTO ======================= -->
-<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~4 min)">
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~3 min 30 s)">
   <div class="kicker"><i data-i="shield"></i>Metodologia</div>
   <h2>Pipeline sem vazamento de dados</h2>
   <div class="body">
@@ -340,7 +341,7 @@ body.fs #lang{display:none}
 </section>
 
 <!-- ======================= 8. DOBRAS AGRUPADAS ======================= -->
-<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~4 min)">
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~3 min 30 s)">
   <div class="kicker"><i data-i="grid"></i>Metodologia</div>
   <h2>Dobras agrupadas por município</h2>
   <div class="body" style="gap:10px">
@@ -362,7 +363,7 @@ body.fs #lang{display:none}
 </section>
 
 <!-- ======================= 9. SPOT-CHECKING ======================= -->
-<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~4 min)">
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~3 min 30 s)">
   <div class="kicker"><i data-i="scale"></i>Spot-checking · Friedman + Nemenyi</div>
   <h2>Seis algoritmos, hiperparâmetros padrão</h2>
   <div class="body" style="gap:8px">
@@ -389,7 +390,7 @@ body.fs #lang{display:none}
 </section>
 
 <!-- ======================= 10. CV ANINHADA ======================= -->
-<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~4 min)">
+<section class="slide" data-who="Artur ou Yaser" data-bloco="Bloco 2 · Metodologia (~3 min 30 s)">
   <div class="kicker"><i data-i="layers"></i>Validação cruzada aninhada</div>
   <h2>Otimização sem otimismo</h2>
   <div class="body">
@@ -649,7 +650,7 @@ body.fs #lang{display:none}
   "As características das escolas predizem o desempenho no ENEM? Uma avaliação agrupada e aninhada de modelos de regressão em escolas de ensino médio brasileiras":"¿Las características de las escuelas predicen el desempeño en el ENEM? Una evaluación agrupada y anidada de modelos de regresión en escuelas de educación media brasileñas",
   "CMP263 – Aprendizado de Máquina · UFRGS · 2026/2":"CMP263 – Aprendizaje Automático · UFRGS · 2026/2",
   "Apresenta":"Presenta","Slide":"Diapositiva",
-  "Artur ou Yaser":"Artur o Yaser",
+  "Artur ou Yaser":"Artur o Yaser","Antes de entrar nos detalhes, este é o caminho completo do trabalho.":"Antes de entrar en los detalles, este es el camino completo del trabajo.","Juntamos o ENEM e o Censo: 23.374 escolas.":"Unimos el ENEM y el Censo: 23.374 escuelas.","Todo o pré-processamento fica dentro de um Pipeline, ajustado só no treino.":"Todo el preprocesamiento está dentro de un Pipeline, ajustado solo con el entrenamiento.","Avaliamos com 5 dobras agrupadas por município, repetidas 3 vezes, e uma validação cruzada interna para escolher os hiperparâmetros.":"Evaluamos con 5 pliegues agrupados por municipio, repetidos 3 veces, y una validación cruzada interna para elegir los hiperparámetros.","Comparamos seis algoritmos, escolhemos o melhor e depois interpretamos.":"Comparamos seis algoritmos, elegimos el mejor y después interpretamos.","Agora o meu colega vai explicar cada passo da metodologia.":"Ahora mi compañero va a explicar cada paso de la metodología.","Bloco 1 · Problema, dados e protocolo (~4 min)":"Bloque 1 · Problema, datos y protocolo (~4 min)","Bloco 2 · Metodologia (~3 min 30 s)":"Bloque 2 · Metodología (~3 min 30 s)",
   "Bloco 1 · Problema e dados (~3 min 15 s)":"Bloque 1 · Problema y datos (~3 min 15 s)",
   "Bloco 2 · Metodologia (~4 min)":"Bloque 2 · Metodología (~4 min)",
   "Bloco 3 · Resultados e interpretação (~4 min)":"Bloque 3 · Resultados e interpretación (~4 min)",
@@ -701,8 +702,8 @@ body.fs #lang{display:none}
   "\"Os dados faltantes são poucos: no máximo 1,95% em um atributo.\"":"\"Los datos faltantes son pocos: como máximo 1,95% en un atributo.\"",
   "\"Encontramos um código especial do INEP, 88888. Ele não é uma quantidade real: significa 'valor extremo'. Aparece em 15 escolas, nos computadores por aluno. Nós o tratamos como dado faltante.\"":"\"Encontramos un código especial del INEP, 88888. No es una cantidad real: significa 'valor extremo'. Aparece en 15 escuelas, en los computadores por alumno. Lo tratamos como dato faltante.\"",
   "\"As contagens são muito assimétricas, porque existem escolas muito grandes. Por isso usamos logaritmo.\"":"\"Los conteos son muy asimétricos, porque existen escuelas muy grandes. Por eso usamos logaritmo.\"",
-  "\"Todos esses problemas são tratados no pré-processamento, que o meu colega vai explicar.\"":"\"Todos estos problemas se tratan en el preprocesamiento, que mi compañero va a explicar.\"",
-  "Passagem: \"Agora o [nome] vai explicar como avaliamos os modelos.\"":"Transición: \"Ahora [nombre] va a explicar cómo evaluamos los modelos.\"",
+  "\"Todos esses problemas são tratados no pré-processamento.\"":"\"Todos estos problemas se tratan en el preprocesamiento.\"",
+  "Passagem: \"Agora vou mostrar o caminho completo do trabalho.\"":"Pase: \"Ahora voy a mostrar el camino completo del trabajo.\"",
   /* 6 */
   "Metodologia":"Metodología","Protocolo completo de avaliação":"Protocolo completo de evaluación",
   "Junção":"Unión","23.374 escolas · 45 atributos":"23.374 escuelas · 45 atributos","ajustado só no treino":"ajustado solo con el entrenamiento",
